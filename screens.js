@@ -5,6 +5,7 @@ const ENTRY_CONFIG = Object.freeze({
   minimumLoadingMs: 1800,
   logo: 'assets/logo.png',
   room: 'assets/room.png',
+  loadingBackground: 'assets/loading-garden.png',
   catArtwork: 'assets/calico-cat.png',
   lobbyProgress: Object.freeze({ value: 0, maximum: 6 }), // Display only; no game-state connection.
   lobbyCounters: Object.freeze({ heart: 5, diamond: 0, coin: 0 }), // Visual placeholders, not an economy.
@@ -84,7 +85,7 @@ async function bootEntryScreens() {
   const progress = document.getElementById('loadingProgress');
   const fill = document.getElementById('loadingFill');
   const message = document.getElementById('loadingMessage');
-  const urls = [...new Set([ENTRY_CONFIG.logo, ENTRY_CONFIG.room, ENTRY_CONFIG.catArtwork,
+  const urls = [...new Set([ENTRY_CONFIG.logo, ENTRY_CONFIG.room, ENTRY_CONFIG.loadingBackground, ENTRY_CONFIG.catArtwork,
     ENTRY_CONFIG.buttonArtwork, ...ICONS, ...Array.from(document.images, image => image.src)].filter(Boolean))];
   let ready = 0;
   const update = setInterval(function() {

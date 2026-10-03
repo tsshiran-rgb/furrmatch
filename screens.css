@@ -118,3 +118,9 @@ body:not([data-screen='game']) .audio-btn { visibility: hidden; }
 .level-launch.coming-soon { font-size: clamp(16px, 2.8dvh, 24px); cursor: default; }
 .level-launch:disabled:active { transform: none; }
 .result-card .end-btn:disabled { cursor: default; }
+/* Scenic loading artwork contains the cat in its new garden pose. */
+#loading { background: url('assets/loading-garden.png') center / cover no-repeat; }
+#loading .loading-cat { display: none; }
+#loading .loading-logo { top: max(4%, env(safe-area-inset-top)); width: 62%; }
+#loading .loading-status { top: 80%; width: 72%; padding: 12px 10px; border-radius: 18px; background: #fff5e6bd; box-shadow: 0 4px 15px #ac7b6133; }
+#loading #loadingMessage { margin-bottom: 10px; }
