@@ -649,7 +649,9 @@ function showScreen(id) {
     const replay = document.getElementById("endNextBtn");
     const won = document.getElementById("endTitle").classList.contains("win");
     const hasNext = won && currentLevel + 1 < ENTRY_CONFIG.levelCount;
-    replay.textContent = hasNext ? "השלב הבא ◀" : "🔄 נסה שוב";
+    const complete = won && currentLevel + 1 === ENTRY_CONFIG.levelCount;
+    replay.disabled = complete;
+    replay.textContent = complete ? "Coming Soon" : hasNext ? "השלב הבא ◀" : "🔄 נסה שוב";
     replay.style.display = "";
     replay.onclick = function() { if (!busy) startLevel(hasNext ? currentLevel + 1 : currentLevel); };
   }

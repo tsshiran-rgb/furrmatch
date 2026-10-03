@@ -115,3 +115,6 @@ body:not([data-screen='game']) .audio-btn { visibility: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .lobby-cat .cat-art { animation: none; }
 }
+.level-launch.coming-soon { font-size: clamp(16px, 2.8dvh, 24px); cursor: default; }
+.level-launch:disabled:active { transform: none; }
+.result-card .end-btn:disabled { cursor: default; }

@@ -33,12 +33,26 @@ function lobbyLevelIndex() {
   const saved = Number.parseInt(localStorage.getItem('fm_maxlevel') || '0', 10);
   return Math.max(0, Math.min(ENTRY_CONFIG.levelCount - 1, Number.isFinite(saved) ? saved : 0));
 }
+function allAvailableLevelsComplete() {
+  return Boolean(levelProgress[ENTRY_CONFIG.levelCount - 1]?.stars);
+}
 function refreshLobbyLevel() {
-  document.getElementById('lobbyLevel').textContent = lobbyLevelIndex() + 1;
+  const button = document.getElementById('levelButton');
+  const complete = allAvailableLevelsComplete();
+  button.disabled = complete;
+  button.classList.toggle('coming-soon', complete);
+  if (complete) button.textContent = 'Coming Soon';
+  else {
+    button.replaceChildren(document.createTextNode('Level '));
+    const number = document.createElement('span');
+    number.id = 'lobbyLevel';
+    number.textContent = lobbyLevelIndex() + 1;
+    button.appendChild(number);
+  }
 }
 refreshLobbyLevel();
 document.getElementById('levelButton').onclick = function() {
-  if (document.body.dataset.state !== 'LOBBY' || busy) return;
+  if (document.body.dataset.state !== 'LOBBY' || busy || allAvailableLevelsComplete()) return;
   initAudio();
   startLevel(lobbyLevelIndex());
 };
