@@ -1,4 +1,4 @@
-/* Special pieces retain their match color; color-clearing yarn is colorless.
+/* Fish and paw are wildcard pieces; color-clearing yarn is colorless.
    Gravity/refill move board values and DOM icons together as before. */
 const SPECIAL_ART = Object.freeze({
   row: 'assets/booster-concepts/goldfish-simple-v2.png',
@@ -7,7 +7,7 @@ const SPECIAL_ART = Object.freeze({
   color: 'assets/booster-concepts/yarn-stars-v3.png'
 });
 const PIECE_COLORS = ['#9d4be2', '#21bfe9', '#84bd32', '#b0aeb9', '#ff7aab'];
-function pieceColor(piece) { return piece === null ? null : typeof piece === 'object' ? piece.color : piece; }
+function pieceColor(piece) { return piece === null ? null : typeof piece === 'object' ? null : piece; }
 function pieceKind(piece) { return piece && typeof piece === 'object' ? piece.kind : null; }
 function safeRand(r, c, grid) {
   const blocked = new Set();
@@ -31,24 +31,21 @@ function createIconEl(piece) {
   img.alt = kind ? ({row:'דג זהב: מנקה שורה',column:'דג זהב: מנקה טור',area:'כפה: פיצוץ סביב',color:'צמר: מנקה סוג'})[kind] : '';
   img.draggable = false;
   icon.appendChild(img);
-  if (kind && piece.color !== null) {
-    icon.style.setProperty('--piece-color', PIECE_COLORS[piece.color]);
-    const marker = document.createElement('span');
-    marker.className = 'special-marker';
-    marker.textContent = kind === 'row' ? '↔' : kind === 'column' ? '↕' : '✦';
-    icon.appendChild(marker);
-  }
   return icon;
 }
+function isWildcard(piece) { return ['row','column','area'].includes(pieceKind(piece)); }
 function matchRuns() {
   const runs=[];
-  for (const horizontal of [true,false]) for(let line=0;line<SIZE;line++) {
+  for(const horizontal of [true,false]) for(let line=0;line<SIZE;line++) for(let color=0;color<NUM_TYPES;color++) {
     let start=0;
+    const at=pos=>board[horizontal?line:pos][horizontal?pos:line];
+    const fits=piece=>isWildcard(piece)||pieceColor(piece)===color;
     while(start<SIZE) {
-      const r=horizontal?line:start,c=horizontal?start:line,color=pieceColor(board[r][c]);
-      let end=start+1;
-      if(color!==null) while(end<SIZE && pieceColor(board[horizontal?line:end][horizontal?end:line])===color) end++;
-      if(color!==null && end-start>=3) runs.push({color,kind:horizontal?'row':'column',cells:Array.from({length:end-start},(_,i)=>({r:horizontal?line:start+i,c:horizontal?start+i:line}))});
+      if(!fits(at(start))){start++;continue;}
+      let end=start,ordinary=0;
+      while(end<SIZE&&fits(at(end))){if(!pieceKind(at(end)))ordinary++;end++;}
+      // A wildcard plus two identical ordinary tiles makes a match.
+      if(end-start>=3&&ordinary>=2) runs.push({color,kind:horizontal?'row':'column',cells:Array.from({length:end-start},(_,i)=>({r:horizontal?line:start+i,c:horizontal?start+i:line}))});
       start=end;
     }
   }
@@ -79,7 +76,7 @@ function specialMatchPlan(preferred=[]) {
     // Never overwrite an existing special that must activate in this match.
     const plain=eligible.filter(p=>!pieceKind(board[p.r][p.c]));
     const anchor=preferred.find(p=>plain.some(q=>key(p)===key(q))) || plain[Math.floor(plain.length/2)];
-    if(anchor) creations.push({...anchor,piece:{kind,color:kind==='color'?null:group[0].color}});
+    if(anchor) creations.push({...anchor,piece:{kind,color:null}});
   }
   return {matches:findMatches(),creations};
 }
