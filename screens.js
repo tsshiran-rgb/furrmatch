@@ -5,7 +5,7 @@ const ENTRY_CONFIG = Object.freeze({
   minimumLoadingMs: 1800,
   logo: 'assets/logo.png',
   room: 'assets/room.png',
-  loadingBackground: 'assets/loading-garden.png',
+  loadingBackground: 'assets/loading-garden-v2.png',
   catArtwork: 'assets/calico-cat.png',
   lobbyProgress: Object.freeze({ value: 0, maximum: 6 }), // Display only; no game-state connection.
   lobbyCounters: Object.freeze({ heart: 5, diamond: 0, coin: 0 }), // Visual placeholders, not an economy.

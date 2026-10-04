@@ -119,7 +119,7 @@ body:not([data-screen='game']) .audio-btn { visibility: hidden; }
 .level-launch:disabled:active { transform: none; }
 .result-card .end-btn:disabled { cursor: default; }
 /* Scenic loading artwork contains the cat in its new garden pose. */
-#loading { background: url('assets/loading-garden.png') center / cover no-repeat; }
+#loading { background: url('assets/loading-garden-v2.png') center / cover no-repeat; }
 #loading .loading-cat { display: none; }
 #loading .loading-logo { top: max(4%, env(safe-area-inset-top)); width: 62%; }
 #loading .loading-status { top: 80%; width: 72%; padding: 12px 10px; border-radius: 18px; background: #fff5e6bd; box-shadow: 0 4px 15px #ac7b6133; }
@@ -129,6 +129,3 @@ body:not([data-screen='game']) .audio-btn { visibility: hidden; }
 .special-piece img { width: 94%; height: 94%; object-fit: contain; }
 .special-column img { transform: rotate(-65deg); }
 .special-marker { position: absolute; bottom: 0; right: 0; width: 40%; height: 35%; display: grid; place-items: center; background: var(--piece-color); border: 1px solid #fff8; border-radius: 8px; color: white; font: 900 clamp(9px, 2vw, 14px)/1 sans-serif; text-shadow: 0 1px 2px #333; }
-/* Slightly reduce the scenic cat artwork and clear its ears below the logo. */
-#loading { background-size: auto calc(100% - 4px); background-color: #f9e7ce; }
-#loading .loading-logo { top: max(calc(4% - 4px), env(safe-area-inset-top)); }
