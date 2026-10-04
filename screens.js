@@ -86,7 +86,7 @@ async function bootEntryScreens() {
   const fill = document.getElementById('loadingFill');
   const message = document.getElementById('loadingMessage');
   const urls = [...new Set([ENTRY_CONFIG.logo, ENTRY_CONFIG.room, ENTRY_CONFIG.loadingBackground, ENTRY_CONFIG.catArtwork,
-    ENTRY_CONFIG.buttonArtwork, ...ICONS, ...Array.from(document.images, image => image.src)].filter(Boolean))];
+    ENTRY_CONFIG.buttonArtwork, ...Object.values(SPECIAL_ART), ...ICONS, ...Array.from(document.images, image => image.src)].filter(Boolean))];
   let ready = 0;
   const update = setInterval(function() {
     const elapsed = performance.now() - started;
