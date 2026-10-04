@@ -9,7 +9,7 @@ const SPECIAL_ART = Object.freeze({
   area: 'assets/booster-concepts/rainbow-paw.png',
   color: 'assets/booster-concepts/yarn-stars-v3.png'
 });
-const PIECE_COLORS = ['#9d4be2', '#21bfe9', '#84bd32', '#e88a00', '#ff7aab'];
+const PIECE_COLORS = ['#9d4be2', '#1f9bf0', '#3fb52a', '#e88a00', '#e8263f'];
 const SCORE_PER_PIECE = 20;
 const SPECIAL_BONUS = Object.freeze({ row: 120, column: 120, area: 200, color: 300 });
 const HINT_DELAY_MS = 5000;
