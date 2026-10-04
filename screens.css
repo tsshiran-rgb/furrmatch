@@ -129,3 +129,5 @@ body:not([data-screen='game']) .audio-btn { visibility: hidden; }
 .special-piece img { width: 94%; height: 94%; object-fit: contain; }
 .special-column img { transform: rotate(-65deg); }
 .special-marker { position: absolute; bottom: 0; right: 0; width: 40%; height: 35%; display: grid; place-items: center; background: var(--piece-color); border: 1px solid #fff8; border-radius: 8px; color: white; font: 900 clamp(9px, 2vw, 14px)/1 sans-serif; text-shadow: 0 1px 2px #333; }
+/* Cap logo height on short phones so its artwork stays above the garden cat. */
+#loading .loading-logo { max-height: 20dvh; object-fit: contain; }
