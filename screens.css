@@ -124,8 +124,37 @@ body:not([data-screen='game']) .audio-btn { visibility: hidden; }
 #loading .loading-logo { top: max(4%, env(safe-area-inset-top)); width: 62%; }
 #loading .loading-status { top: 80%; width: 72%; padding: 12px 10px; border-radius: 18px; background: #fff5e6bd; box-shadow: 0 4px 15px #ac7b6133; }
 #loading #loadingMessage { margin-bottom: 10px; }
+/* Special pieces: a soft glow in the piece's match color sits behind the art. */
 .special-piece { border-radius: 50%; }
-.special-piece img { width: 94%; height: 94%; object-fit: contain; }
+.special-piece::before { content: ''; position: absolute; inset: -12%; z-index: -1; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--piece-color) 55%, #fff) 0%, var(--piece-color) 42%, color-mix(in srgb, var(--piece-color) 55%, transparent) 60%, transparent 72%); box-shadow: inset 0 0 0 2px #fff9; animation: special-glow 1.6s ease-in-out infinite; }
+.special-color::before { background: conic-gradient(from 0deg, #ff7aab, #ffd34d, #84bd32, #21bfe9, #9d4be2, #ff7aab); mask: radial-gradient(circle, #000 35%, transparent 70%); animation: special-glow 1.6s ease-in-out infinite, yarn-spin 3s linear infinite; }
+.special-piece img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 2px #fff) drop-shadow(0 1px 3px #0005); }
 .special-column img { transform: rotate(-65deg); }
+@keyframes special-glow { 0%, 100% { opacity: .75; scale: .92; } 50% { opacity: 1; scale: 1.06; } }
+@keyframes yarn-spin { to { rotate: 360deg; } }
+
+/* Banner text is mixed English/Hebrew; let each message pick its own direction. */
+.combo-badge { unicode-bidi: plaintext; }
+
+/* Piece life cycle. These animate `scale`, which stacks with the inline movement transforms. */
+.icon.popping { animation: piece-pop 240ms ease-in forwards; }
+@keyframes piece-pop { 0% { scale: 1; } 35% { scale: 1.25; filter: brightness(1.5); } 100% { scale: 0; opacity: 0; } }
+.icon.special-born { animation: special-born 420ms cubic-bezier(.34,1.56,.64,1); }
+@keyframes special-born { 0% { scale: 0; } 60% { scale: 1.35; filter: brightness(1.6); } 100% { scale: 1; } }
+.icon.hint { animation: hint-nudge 1s ease-in-out infinite; }
+@keyframes hint-nudge { 0%, 100% { scale: 1; } 50% { scale: 1.16; filter: brightness(1.25) drop-shadow(0 0 6px #fff); } }
+
+/* Blast effects drawn over the board when a special fires. */
+.blast-fx { position: absolute; pointer-events: none; z-index: 60; }
+.beam-row { left: 0; width: 100%; background: linear-gradient(90deg, transparent, #fff 20%, #fff8c8 50%, #fff 80%, transparent); box-shadow: 0 0 18px 6px #fff6; animation: beam-x 450ms ease-out forwards; }
+.beam-col { top: 0; height: 100%; background: linear-gradient(180deg, transparent, #fff 20%, #fff8c8 50%, #fff 80%, transparent); box-shadow: 0 0 18px 6px #fff6; animation: beam-y 450ms ease-out forwards; }
+.burst { border-radius: 50%; background: radial-gradient(circle, #fff 0%, #ffe58acc 40%, #ff9d5c55 65%, transparent 72%); animation: burst 480ms ease-out forwards; }
+.zap { border-radius: 50%; background: radial-gradient(circle, #fff 0%, #d9b8ff 45%, transparent 70%); animation: burst 420ms ease-out forwards; }
+@keyframes beam-x { 0% { transform: scaleX(0); opacity: 1; } 45% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1) scaleY(.2); opacity: 0; } }
+@keyframes beam-y { 0% { transform: scaleY(0); opacity: 1; } 45% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1) scaleX(.2); opacity: 0; } }
+@keyframes burst { 0% { transform: scale(.2); opacity: 1; } 100% { transform: scale(1.15); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .special-piece::before, .icon.hint { animation: none; }
+}
 /* Cap logo height on short phones so its artwork stays above the garden cat. */
 #loading .loading-logo { max-height: 20dvh; object-fit: contain; }

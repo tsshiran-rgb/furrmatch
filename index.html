@@ -497,7 +497,9 @@ function sfxBooster() {
 
 
 /* ═══════════════════════ LEVELS ═══════════════════════ */
-const LEVELS = [{"moves": 40, "target": 500}, {"moves": 38, "target": 900}, {"moves": 36, "target": 1400}, {"moves": 34, "target": 2000}, {"moves": 32, "target": 2700}, {"moves": 30, "target": 3500}, {"moves": 28, "target": 4400}, {"moves": 26, "target": 5400}, {"moves": 24, "target": 6500}, {"moves": 22, "target": 8000}];
+// Tuned by bot simulation for 20 points per piece, random refills and the leftover-move frenzy.
+// Levels 7-10 are not in the campaign yet (ENTRY_CONFIG.levelCount is 6).
+const LEVELS = [{"moves": 25, "target": 3500}, {"moves": 25, "target": 5000}, {"moves": 24, "target": 6500}, {"moves": 22, "target": 7500}, {"moves": 22, "target": 8000}, {"moves": 22, "target": 9000}, {"moves": 21, "target": 9500}, {"moves": 21, "target": 10000}, {"moves": 20, "target": 10000}, {"moves": 20, "target": 10500}];
 
 /* ═══════════════════════ ICONS ════════════════════════ */
 const ICONS = [
@@ -530,7 +532,8 @@ const hudLevel   = document.getElementById("hudLevel");
 const comboEl    = document.getElementById("combo");
 
 /* ═══════════════════════ UTILS ════════════════════════ */
-const sleep    = ms => new Promise(r => setTimeout(r, ms));
+// FM_TIME_SCALE lets automated tests fast-forward the animation pauses.
+const sleep    = ms => new Promise(r => setTimeout(r, ms * (window.FM_TIME_SCALE || 1)));
 const tileLeft = c  => c * (tileSize + GAP);
 const tileTop  = r  => r * (tileSize + GAP);
 
@@ -628,11 +631,14 @@ function startLevel(levelIdx) {
   showScreen("game");
   computeLayout();
 
-  board = [];
-  for (var r = 0; r < SIZE; r++) {
-    board[r] = [];
-    for (var c = 0; c < SIZE; c++) board[r][c] = safeRand(r, c, board);
-  }
+  // Start match-free, but always with at least one playable move.
+  do {
+    board = [];
+    for (var r = 0; r < SIZE; r++) {
+      board[r] = [];
+      for (var c = 0; c < SIZE; c++) board[r][c] = safeRand(r, c, board);
+    }
+  } while (!findValidMoves().length);
 
   var boardInner = document.getElementById("board-inner");
   boardInner.innerHTML = "";
@@ -653,6 +659,7 @@ function startLevel(levelIdx) {
       cells[r][c].appendChild(icon);
       tiles[r][c] = icon;
     }
+  scheduleHint();
 }
 
 function updateHUD() {
@@ -799,8 +806,10 @@ function slideTile(el, fromR, fromC, toR, toC, ms) {
 
 /* ═══════════════════════ RESOLVE ══════════════════════ */
 /* ═══════════════════════ DROP ═════════════════════════ */
+// Accelerates in, then overshoots slightly so pieces land with a small bounce.
+const LAND_EASING = "cubic-bezier(0.5,0,0.7,1.25)";
 async function dropTiles() {
-  var MS_PER_ROW = 52, MAX_MS = 105, maxDur = 0;
+  var MS_PER_ROW = 70, MAX_MS = 320, maxDur = 0;
   for (var c = 0; c < SIZE; c++) {
     var emptyRow = SIZE - 1;
     for (var r = SIZE - 1; r >= 0; r--) {
@@ -818,7 +827,7 @@ async function dropTiles() {
           // Animate from above (negative offset)
           el.style.transform = "translateY(" + (-dist * (tileSize + GAP)) + "px)";
           el.getBoundingClientRect();
-          el.style.transition = "transform " + dur + "ms cubic-bezier(0.4,0,1,1)";
+          el.style.transition = "transform " + dur + "ms " + LAND_EASING;
           el.style.transform  = "translateY(0)";
         }
         emptyRow--;
@@ -837,12 +846,12 @@ async function dropTiles() {
 
 /* ═══════════════════════ FILL ═════════════════════════ */
 async function fillNewTiles() {
-  var FALL_MS = 95, maxWait = 0;
+  var maxWait = 0;
   for (var c = 0; c < SIZE; c++) {
-    var newCount = 0;
     for (var r = 0; r < SIZE; r++) {
       if (board[r][c] === null) {
-        board[r][c] = safeRand(r, c, board);
+        // Refills are random, so falling pieces can set off lucky cascades.
+        board[r][c] = randomPiece();
         var icon = createIconEl(board[r][c]);
         // Start icon above its cell
         var sampleCell = cells[0] && cells[0][0];
@@ -850,16 +859,16 @@ async function fillNewTiles() {
         icon.style.transform = "translateY(-" + ((r + 1) * ch + 20) + "px)";
         cells[r][c].appendChild(icon);
         tiles[r][c] = icon;
-        var stagger = newCount * 18;
-        maxWait = Math.max(maxWait, 8 + stagger + FALL_MS);
-        (function(e, s) {
+        // Constant fall speed: new pieces in a column travel down together.
+        var fall = Math.min(140 + (r + 1) * 45, 500);
+        maxWait = Math.max(maxWait, 8 + fall);
+        (function(e, ms) {
           setTimeout(function() {
             e.getBoundingClientRect();
-            e.style.transition = "transform " + FALL_MS + "ms cubic-bezier(0.4,0,1,1)";
+            e.style.transition = "transform " + ms + "ms " + LAND_EASING;
             e.style.transform  = "translateY(0)";
-          }, 8 + s);
-        })(icon, stagger);
-        newCount++;
+          }, 8);
+        })(icon, fall);
       }
     }
   }
