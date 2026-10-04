@@ -243,7 +243,6 @@
 <section class="screen hidden" id="lobby" dir="ltr" aria-label="Main lobby" inert>
   <div class="cat-stage lobby-cat" data-cat-slot="lobby"><div class="cat-art" role="img" aria-label="Calico cat standing on the rug"><img src="assets/logo.png" alt="" draggable="false"></div></div>
   <div class="lobby-resources" dir="ltr" aria-label="Lobby counters"><div class="resource-counter resource-heart" aria-label="Lives, display only"><img src="assets/heart-3d.png" alt="" draggable="false"><span id="heartValue">5</span></div><div class="resource-counter resource-diamond" aria-label="Diamonds, display only"><img src="assets/diamond-3d.png" alt="" draggable="false"><span id="diamondValue">0</span></div><div class="resource-counter resource-coin" aria-label="Paw coins, display only"><img src="assets/coin-3d.png" alt="" draggable="false"><span id="coinValue">0</span></div></div>
-  <div class="lobby-progress" role="progressbar" aria-label="Lobby progress" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0"><span class="lobby-progress-fill"></span><span class="lobby-progress-label">0/6</span></div>
   <button class="level-launch" id="levelButton" type="button">Level <span id="lobbyLevel">1</span></button>
   <nav class="lobby-nav" aria-label="Future features"><button class="locked-tab" type="button" disabled aria-label="Locked feature 1"><svg viewBox="0 0 24 28" aria-hidden="true"><path d="M6 12V8a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><rect x="2" y="11" width="20" height="16" rx="5" fill="currentColor"/><path d="M12 17v4" stroke="#ead4f1" stroke-width="3" stroke-linecap="round"/></svg></button><button class="locked-tab" type="button" disabled aria-label="Locked feature 2"><svg viewBox="0 0 24 28" aria-hidden="true"><path d="M6 12V8a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><rect x="2" y="11" width="20" height="16" rx="5" fill="currentColor"/><path d="M12 17v4" stroke="#ead4f1" stroke-width="3" stroke-linecap="round"/></svg></button><button class="locked-tab" type="button" disabled aria-label="Locked feature 3"><svg viewBox="0 0 24 28" aria-hidden="true"><path d="M6 12V8a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><rect x="2" y="11" width="20" height="16" rx="5" fill="currentColor"/><path d="M12 17v4" stroke="#ead4f1" stroke-width="3" stroke-linecap="round"/></svg></button><button class="locked-tab" type="button" disabled aria-label="Locked feature 4"><svg viewBox="0 0 24 28" aria-hidden="true"><path d="M6 12V8a6 6 0 0 1 12 0v4" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><rect x="2" y="11" width="20" height="16" rx="5" fill="currentColor"/><path d="M12 17v4" stroke="#ead4f1" stroke-width="3" stroke-linecap="round"/></svg></button></nav>
 </section>
@@ -555,10 +554,10 @@ function showScreen(id) {
     const won = document.getElementById("endTitle").classList.contains("win");
     const hasNext = won && currentLevel + 1 < ENTRY_CONFIG.levelCount;
     const complete = won && currentLevel + 1 === ENTRY_CONFIG.levelCount;
-    replay.disabled = complete;
-    replay.textContent = complete ? "Coming Soon" : hasNext ? "השלב הבא ◀" : "🔄 נסה שוב";
+    replay.disabled = false;
+    replay.textContent = complete ? "התחל מחדש" : hasNext ? "השלב הבא ◀" : "🔄 נסה שוב";
     replay.style.display = "";
-    replay.onclick = function() { if (!busy) startLevel(hasNext ? currentLevel + 1 : currentLevel); };
+    replay.onclick = function() { if (!busy) { if (complete) restartCampaign(); else startLevel(hasNext ? currentLevel + 1 : currentLevel); } };
   }
 }
 

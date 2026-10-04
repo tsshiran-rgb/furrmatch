@@ -7,7 +7,6 @@ const ENTRY_CONFIG = Object.freeze({
   room: 'assets/room.png',
   loadingBackground: 'assets/loading-garden-v2.png',
   catArtwork: 'assets/calico-cat.png',
-  lobbyProgress: Object.freeze({ value: 0, maximum: 6 }), // Display only; no game-state connection.
   lobbyCounters: Object.freeze({ heart: 5, diamond: 0, coin: 0 }), // Visual placeholders, not an economy.
   messages: ['Loading treats…', 'Untangling yarn…', 'Chasing mice…']
 });
@@ -20,16 +19,9 @@ if (ENTRY_CONFIG.catArtwork) {
     slot.replaceChildren(image);
   });
 }
-const lobbyProgress = document.querySelector('.lobby-progress');
 Object.entries(ENTRY_CONFIG.lobbyCounters).forEach(function([key, value]) {
   document.getElementById(key + 'Value').textContent = value;
 });
-const progressMaximum = Math.max(1, ENTRY_CONFIG.lobbyProgress.maximum);
-const progressValue = Math.max(0, Math.min(progressMaximum, ENTRY_CONFIG.lobbyProgress.value));
-lobbyProgress.setAttribute('aria-valuemax', progressMaximum);
-lobbyProgress.setAttribute('aria-valuenow', progressValue);
-lobbyProgress.querySelector('.lobby-progress-label').textContent = progressValue + '/' + progressMaximum;
-lobbyProgress.querySelector('.lobby-progress-fill').style.width = (progressValue / progressMaximum * 100) + '%';
 function lobbyLevelIndex() {
   const saved = Number.parseInt(localStorage.getItem('fm_maxlevel') || '0', 10);
   return Math.max(0, Math.min(ENTRY_CONFIG.levelCount - 1, Number.isFinite(saved) ? saved : 0));
@@ -37,12 +29,22 @@ function lobbyLevelIndex() {
 function allAvailableLevelsComplete() {
   return Boolean(levelProgress[ENTRY_CONFIG.levelCount - 1]?.stars);
 }
+function restartCampaign() {
+  if (busy) return;
+  levelProgress = {};
+  localStorage.setItem('fm_progress', '{}');
+  localStorage.setItem('fm_maxlevel', '0');
+  drag = null;
+  clearSelection();
+  refreshLobbyLevel();
+  startLevel(0);
+}
 function refreshLobbyLevel() {
   const button = document.getElementById('levelButton');
   const complete = allAvailableLevelsComplete();
-  button.disabled = complete;
+  button.disabled = false;
   button.classList.toggle('coming-soon', complete);
-  if (complete) button.textContent = 'Coming Soon';
+  if (complete) button.textContent = 'התחל מחדש';
   else {
     button.replaceChildren(document.createTextNode('Level '));
     const number = document.createElement('span');
@@ -53,9 +55,10 @@ function refreshLobbyLevel() {
 }
 refreshLobbyLevel();
 document.getElementById('levelButton').onclick = function() {
-  if (document.body.dataset.state !== 'LOBBY' || busy || allAvailableLevelsComplete()) return;
+  if (document.body.dataset.state !== 'LOBBY' || busy) return;
   initAudio();
-  startLevel(lobbyLevelIndex());
+  if (allAvailableLevelsComplete()) restartCampaign();
+  else startLevel(lobbyLevelIndex());
 };
 document.getElementById('gameLobbyBtn').onclick = function() {
   // Let an in-flight swap/cascade finish before leaving or rebuilding the board.
