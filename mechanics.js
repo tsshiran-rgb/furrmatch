@@ -7,7 +7,7 @@ const SPECIAL_ART = Object.freeze({
   row: 'assets/booster-concepts/goldfish-simple-v2.png',
   column: 'assets/booster-concepts/goldfish-simple-v2.png',
   area: 'assets/booster-concepts/rainbow-paw.png',
-  color: 'assets/booster-concepts/yarn-stars-v3.png'
+  color: 'assets/booster-concepts/yarn-stars-brown-v4.png'
 });
 const PIECE_COLORS = ['#9d4be2', '#1f9bf0', '#3fb52a', '#e88a00', '#e8263f'];
 const SCORE_PER_PIECE = 20;
