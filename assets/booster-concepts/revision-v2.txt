@@ -1,0 +1,5 @@
+Design revision v2 — built-in ImageGen, concepts only.
+Yarn prompt: preserve coral pink thick soft yarn and curled end; replace ribbons and hanging charm with small raised gold five-point stars scattered irregularly with varied rotations. Transparent background, full isolated object, warm rounded 3D polish.
+Fish prompt: simple molded golden fish token based on supplied reference, head lower left tail upper right, tiny recessed eye, shallow scales, simple fin and short tail; no expressive character face or ornate fins; inflated rounded metallic gold 3D, transparent background.
+Existing rainbow paw unchanged. Original concepts preserved. No mechanics or website changes.
+Revision v3, built-in ImageGen edit: remove only lower-right curled yarn tail, complete round silhouette, preserve pink yarn texture, gold stars, lighting and transparent background. Saved as yarn-stars-v3.png.
