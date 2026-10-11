@@ -9,6 +9,7 @@ const SPECIAL_ART = Object.freeze({
   area: 'assets/booster-concepts/rainbow-paw.png',
   color: 'assets/booster-concepts/yarn-stars-brown-v4.png'
 });
+const FISH_ART = Object.freeze(['purple', 'blue', 'green', 'yellow', 'red'].map(color => 'assets/booster-concepts/fish-colors/' + color + '.png'));
 const PIECE_COLORS = ['#9d4be2', '#1f9bf0', '#3fb52a', '#e88a00', '#e8263f'];
 const SCORE_PER_PIECE = 20;
 const SPECIAL_BONUS = Object.freeze({ row: 120, column: 120, area: 200, color: 300 });
@@ -37,7 +38,7 @@ function createIconEl(piece) {
   icon.className = 'icon' + (kind ? ' special-piece special-' + kind : '');
   if (kind && piece.color !== null) icon.style.setProperty('--piece-color', PIECE_COLORS[piece.color]);
   const img = document.createElement('img');
-  img.src = kind ? SPECIAL_ART[kind] : ICONS[piece];
+  img.src = (kind === 'row' || kind === 'column') ? FISH_ART[piece.color] : kind ? SPECIAL_ART[kind] : ICONS[piece];
   img.alt = kind ? ({row:'דג זהב: מנקה שורה',column:'דג זהב: מנקה טור',area:'כפה: פיצוץ סביב',color:'צמר: מנקה סוג'})[kind] : '';
   img.draggable = false;
   icon.appendChild(img);
